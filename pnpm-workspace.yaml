@@ -1,0 +1,23 @@
+# pnpm settings for this app, which is its own workspace root.
+#
+# The supply-chain policy: a dependency version published less than 14 days ago
+# cannot be installed (minimumReleaseAge, in minutes); no dependency runs an
+# install script unless it is named here (strictDepBuilds), and sharp's is
+# refused because the app serves no optimized images; sub-dependencies from
+# exotic sources are blocked; and the lockfile is not trusted for a resolution
+# these rules would reject.
+
+packages: []
+
+minimumReleaseAge: 20160
+minimumReleaseAgeExclude: []
+
+strictDepBuilds: true
+dangerouslyAllowAllBuilds: false
+onlyBuiltDependencies: []
+ignoredBuiltDependencies: []
+allowBuilds:
+  sharp: false
+
+blockExoticSubdeps: true
+trustLockfile: false

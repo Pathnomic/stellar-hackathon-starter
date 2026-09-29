@@ -1,0 +1,24 @@
+Stellar hackathon starter
+Copyright 2026 Pathnomic Labs
+
+This product is the Stellar starting kit of Tellop, the app builder made by
+Pathnomic Labs. It is licensed under the Apache License, Version 2.0 (LICENSE).
+
+The Stellar guide in docs/stellar/ contains material from Stellar's
+"stellar-dev-skill" (https://github.com/stellar/stellar-dev-skill),
+Copyright 2026 Stellar Development Foundation, licensed under the Apache
+License, Version 2.0, and trimmed and annotated by Pathnomic Labs.
+docs/stellar/NOTICE names the commit it was taken from and every change.
+
+The fundraiser contract in contracts/fundraiser/ depends on OpenZeppelin
+Stellar Contracts 0.7.2 (stellar-access, stellar-contract-utils and
+stellar-macros, https://github.com/OpenZeppelin/stellar-contracts), licensed
+under the MIT License, and on the Soroban SDK
+(https://github.com/stellar/rs-soroban-sdk), licensed under the Apache License,
+Version 2.0. Neither is copied into this repository: Cargo fetches them at the
+versions Cargo.lock records.
+
+components/ui/ and components/reui/ hold pieces vendored from shadcn/ui
+(Copyright (c) 2023 shadcn) and ReUI (Copyright (c) 2025 Keenthemes Inc), both
+licensed under the MIT License. Their licence texts are in components/LICENSES/,
+and components/PROVENANCE.json records where each piece came from.

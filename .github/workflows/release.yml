@@ -1,0 +1,38 @@
+# Builds, attests and releases the fundraiser contract when a tag starting with
+# "v" is pushed, after the tests pass. The build is stellar-expert's
+# soroban-build-workflow (a SEP-55 verified build: the WASM records this
+# repository, the release lists its SHA-256, and GitHub attests it), pinned to a
+# full commit: 88068ec50cba931a96436869727ed08edeb76ade is its v27.0.0
+# (Stellar CLI 27.0.0), committed 2026-07-23.
+#
+# Tag only the newest commit of the default branch: the workflow creates its
+# release, named after the tag, the contract and the CLI, from that branch.
+name: Release contract
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  id-token: write
+  contents: write
+  attestations: write
+
+jobs:
+  test:
+    permissions:
+      contents: read
+    uses: ./.github/workflows/test.yml
+
+  release:
+    needs: test
+    uses: stellar-expert/soroban-build-workflow/.github/workflows/release.yml@88068ec50cba931a96436869727ed08edeb76ade # v27.0.0
+    with:
+      release_name: ${{ github.ref_name }}
+      release_description: 'Fundraiser contract, built and attested from this repository. Test network only; reviewed, not audited.'
+      # A plain path: at this commit the workflow appends it to the checkout
+      # folder as it is.
+      relative_path: contracts/fundraiser
+      package: fundraiser
+    secrets:
+      release_token: ${{ secrets.GITHUB_TOKEN }}

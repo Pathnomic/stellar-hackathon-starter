@@ -1,0 +1,43 @@
+/*
+ * How this app is set.
+ *
+ * Neutral until a look is approved: the sizes and families below are the ones
+ * every machine already has, so a project that has never been through the
+ * look-and-feel step still renders properly. **Tellop replaces this whole
+ * file** when a look is approved - whole, never patched - with the two families
+ * the chosen pairing means, the `@font-face` rules for them, and the font files
+ * themselves under `public/fonts`, so nothing here has to reach the network at
+ * any point.
+ *
+ * ## The template ships no typeface of its own, deliberately
+ *
+ * There are two coherent ways to reconcile this file with the chosen look, and
+ * this is the one Tellop takes: **the template stays neutral, and approving a
+ * look is what installs the faces.** The other way - shipping one pairing's
+ * faces here so a fresh scaffold already renders in them - would put a second
+ * copy of the curated shelf's bytes in the tree, against the one-canonical-copy
+ * rule the shelf is staged under, and would add tracked binaries to a template
+ * that is meant to gain nothing at all.
+ *
+ * **Approving includes the one-click ready-made look.** That exit is engine-free
+ * and works offline, and it is not an exception here: it has a chosen pairing
+ * like any other look, so it ships that pairing's files and rewrites this file
+ * exactly the same way. Until then, the size below is the same size that look
+ * sets, so nothing resizes underneath somebody when they take it.
+ *
+ * Kept apart from `tokens.css` on purpose: that file is exactly the named colour
+ * and shape contract and nothing else, and this one is the typography.
+ */
+
+:root {
+  --reading: 16px;
+  --font-display: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  /*
+   * The weight the heading face was shipped at. 700 here, because a system stack
+   * has a real bold; a curated face may ship at 400 only, and this is how a
+   * heading rule asks for the weight that exists instead of one the browser has
+   * to fake. Headings use it - see globals.css.
+   */
+  --display-weight: 700;
+  --font-body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}

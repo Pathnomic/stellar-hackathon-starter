@@ -1,0 +1,477 @@
+{
+  "excluded": [
+    {
+      "name": "carousel",
+      "reason": "needs embla-carousel-react, not qualified"
+    },
+    {
+      "name": "command",
+      "reason": "needs cmdk, not qualified"
+    },
+    {
+      "name": "input-otp",
+      "reason": "needs input-otp, not qualified"
+    },
+    {
+      "name": "message-scroller",
+      "reason": "needs @shadcn/react, not qualified"
+    },
+    {
+      "name": "questionnaire",
+      "reason": "needs @shadcn/react, not qualified"
+    },
+    {
+      "name": "resizable",
+      "reason": "needs react-resizable-panels, not qualified"
+    },
+    {
+      "name": "@reui/phone-input",
+      "reason": "needs react-phone-number-input (and its /flags subpath), not qualified"
+    },
+    {
+      "name": "@reui/tree",
+      "reason": "needs @headless-tree/core, not qualified"
+    }
+  ],
+  "files": [
+    {
+      "path": "app/kit.css",
+      "sha256": "780d228e30499de39c5424321bf7b6738fce6ab4cccbcad4997bfc3076598b33",
+      "source": "shadcn-ui",
+      "upstreamPath": "packages/shadcn/src/tailwind.css"
+    },
+    {
+      "path": "components/LICENSES/reui.txt",
+      "sha256": "09592ffefa6512b68dd7aa9031bc50d5d39cfcc9da08288f5eb1f9d236baca66",
+      "source": "reui",
+      "upstreamPath": "LICENSE.md"
+    },
+    {
+      "path": "components/LICENSES/shadcn-ui.txt",
+      "sha256": "1564074e13439397221ffd522e2e504d56561994a23d371aa5e3ad43e4f5423f",
+      "source": "shadcn-ui",
+      "upstreamPath": "LICENSE.md"
+    },
+    {
+      "path": "components/reui/autocomplete.jsx",
+      "sha256": "83270a493eb63fe99f7a9c2e9077a78fd2ecc344afe0e41178263a0b5452877c",
+      "source": "reui",
+      "upstreamPath": "registry-reui/bases/base/reui/autocomplete.tsx"
+    },
+    {
+      "path": "components/reui/date-selector.jsx",
+      "sha256": "3f00d117272c7c9acc790e6775100c5ec3bc411e92c5205d7f9fb94db162fd3b",
+      "source": "reui",
+      "upstreamPath": "registry-reui/bases/base/reui/date-selector.tsx"
+    },
+    {
+      "path": "components/reui/number-field.jsx",
+      "sha256": "88bdc0b660b9525c3821079d1a5d4895bcf35d78fbc51b148f45c40ba05614ad",
+      "source": "reui",
+      "upstreamPath": "registry-reui/bases/base/reui/number-field.tsx"
+    },
+    {
+      "path": "components/reui/rating.jsx",
+      "sha256": "cb368994a945e4ac5d66656534e3f8e698731a6655e4fab62762c98dad0b8b2b",
+      "source": "reui",
+      "upstreamPath": "registry-reui/bases/base/reui/rating.tsx"
+    },
+    {
+      "path": "components/reui/stepper.jsx",
+      "sha256": "e5785fed19bd294a765f8e95fbd41b78be5785e4938eaffd79c9537b3514b045",
+      "source": "reui",
+      "upstreamPath": "registry-reui/bases/base/reui/stepper.tsx"
+    },
+    {
+      "path": "components/reui/timeline.jsx",
+      "sha256": "120f2732ebf934afc5646f8280615adaffd76d6d01e2bf1faab6b92eef3fb829",
+      "source": "reui",
+      "upstreamPath": "registry-reui/bases/base/reui/timeline.tsx"
+    },
+    {
+      "path": "components/ui/accordion.jsx",
+      "sha256": "c53062194dc5f8a9901bb9574538b8d3e760142cff8f815ab175c07618e784c5",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/accordion.tsx"
+    },
+    {
+      "path": "components/ui/alert-dialog.jsx",
+      "sha256": "24c36cbe779501c0487ebfafec705b4f1edb4bdad042a580f4ac54d284bc433a",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/alert-dialog.tsx"
+    },
+    {
+      "path": "components/ui/alert.jsx",
+      "sha256": "c9f23e35db6679cc12281756778dbb8c5401c035170974dcbbb69ddebf8b792e",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/alert.tsx"
+    },
+    {
+      "path": "components/ui/aspect-ratio.jsx",
+      "sha256": "87345a8df4cd99d865e0f6138ae08fe7c98947a12cfdce47ee99ca26c4410b29",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/aspect-ratio.tsx"
+    },
+    {
+      "path": "components/ui/attachment.jsx",
+      "sha256": "e2ff4427eedba871598d48d24181b22e59f4e165970947d1cd15e3006490a1b0",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/attachment.tsx"
+    },
+    {
+      "path": "components/ui/avatar.jsx",
+      "sha256": "fed557f59183dabf189a10f784308a1729e9ed2f5528283b748479ca8df71ef6",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/avatar.tsx"
+    },
+    {
+      "path": "components/ui/badge.jsx",
+      "sha256": "f36735798e41551712d3a9c4b264164fe679b90711d878e959c663de34593bf7",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/badge.tsx"
+    },
+    {
+      "path": "components/ui/breadcrumb.jsx",
+      "sha256": "abf914de0fc7be0d10c319c402d4f3f1f9e02cb738346ed8d30cc592ec6cddf5",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/breadcrumb.tsx"
+    },
+    {
+      "path": "components/ui/bubble.jsx",
+      "sha256": "8b0e09e263cb2da5e6cd7fdc97bd3b959bd68644f308491934b1504fa13f45a4",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/bubble.tsx"
+    },
+    {
+      "path": "components/ui/button-group.jsx",
+      "sha256": "fce45d64b72be56d44ce91f3f93769a03b48df4d5dc1a6dac72832a0ced0ba16",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/button-group.tsx"
+    },
+    {
+      "path": "components/ui/button.jsx",
+      "sha256": "45c18b60f3b588aa6c2642a89759d83e03f74235f8f784735e85c0597152f182",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/button.tsx"
+    },
+    {
+      "path": "components/ui/calendar.jsx",
+      "sha256": "26d4962f1febf1afc5cd3642d8b8ff553ea5818831a718d128853d9dba97e982",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/calendar.tsx"
+    },
+    {
+      "path": "components/ui/card.jsx",
+      "sha256": "51bd95103e1c3cd7e3b04199dd06afc32e35a3b8d0ebf4fc9b2e300c0aa3f36c",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/card.tsx"
+    },
+    {
+      "path": "components/ui/chart.jsx",
+      "sha256": "b621a6e9fadf01c755fc4170e131e419ebe4066a70d4238bf1e2c6180e511a39",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/chart.tsx"
+    },
+    {
+      "path": "components/ui/checkbox.jsx",
+      "sha256": "8f4037c2cdea9f1c91548743531ac675f2fc42b85715523ed72f0a715f675874",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/checkbox.tsx"
+    },
+    {
+      "path": "components/ui/collapsible.jsx",
+      "sha256": "d11d4441180b196c9cbb85c6b9c9fa0410c122f50307677e9b64f3843653cc08",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/collapsible.tsx"
+    },
+    {
+      "path": "components/ui/combobox.jsx",
+      "sha256": "ae1809aeba83ded1bcb75f946984f92895e08d35104095268cfe2d8c43cd64f8",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/combobox.tsx"
+    },
+    {
+      "path": "components/ui/context-menu.jsx",
+      "sha256": "602924e19e6c4b97dcfe3e630414cc6ca79fe2ad57a3f2e7f978a5f7ed52956e",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/context-menu.tsx"
+    },
+    {
+      "path": "components/ui/data-table.jsx",
+      "sha256": "a0b6be3a0978c3a55bf9b00471b49b04006ecb6fcc1f0226785c7c3f39e3b0e0",
+      "source": "tellop",
+      "upstreamPath": "components/ui/data-table.jsx"
+    },
+    {
+      "path": "components/ui/dialog.jsx",
+      "sha256": "901b5a5afbe6e3f76c298d0ad744dd8f164d23ddafd9062b759b6949a5a03124",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/dialog.tsx"
+    },
+    {
+      "path": "components/ui/direction.jsx",
+      "sha256": "661ff5b9c0dc26edde1226bfedc0ab50976d84f8bae42ca83a38dc3b478fd4d4",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/direction.tsx"
+    },
+    {
+      "path": "components/ui/drawer.jsx",
+      "sha256": "044a4b397e3ff8268183abbca1d92ee3d9c89fbce22cfb41b675357541b8ea82",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/drawer.tsx"
+    },
+    {
+      "path": "components/ui/dropdown-menu.jsx",
+      "sha256": "367602c146bf6498d07524a61fe87701e9d4d44c818d66a400b39d8e59825005",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/dropdown-menu.tsx"
+    },
+    {
+      "path": "components/ui/editor.jsx",
+      "sha256": "15351ca70da58c8d3951a01e791f7fd12afb98692cffb0317c8b68b64a937a37",
+      "source": "tellop",
+      "upstreamPath": "components/ui/editor.jsx"
+    },
+    {
+      "path": "components/ui/empty.jsx",
+      "sha256": "269c110c8d4d9d157cb23a7a1f74981e10c36b5d39b5f0d500c5c4e329062510",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/empty.tsx"
+    },
+    {
+      "path": "components/ui/field.jsx",
+      "sha256": "be402ffaca0434455e02d2033cb565a90913762a516228913d2b7419b6063531",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/field.tsx"
+    },
+    {
+      "path": "components/ui/file-upload.jsx",
+      "sha256": "fdf043502431ed1e45ed99ddc27b0b574e5e5204ab585a0394d4a70d8afa8ec0",
+      "source": "tellop",
+      "upstreamPath": "components/ui/file-upload.jsx"
+    },
+    {
+      "path": "components/ui/hover-card.jsx",
+      "sha256": "dcdeff631275d7ebf80b452c4ab9e59bb934cb91514a46c8f786cc803491a541",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/hover-card.tsx"
+    },
+    {
+      "path": "components/ui/input-group.jsx",
+      "sha256": "cfef3196952d4f0a600503415218f5a6e552999094d6452ea22d95f48bfe7ef5",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/input-group.tsx"
+    },
+    {
+      "path": "components/ui/input.jsx",
+      "sha256": "b206f6e65ffece050c25a24babc469c150498152cc05ecbd116282cb84b06c4a",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/input.tsx"
+    },
+    {
+      "path": "components/ui/item.jsx",
+      "sha256": "97b795c6b06ee2ee4b41daaee45d316b874175887c27aa044cfd6a977d001f3d",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/item.tsx"
+    },
+    {
+      "path": "components/ui/kbd.jsx",
+      "sha256": "5938d3bce6c5c09c016bc188ba4e80a62a1987e11e47140530d21d16c101b79e",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/kbd.tsx"
+    },
+    {
+      "path": "components/ui/label.jsx",
+      "sha256": "ac27031866636f25507d1edbd44e82172aca549dce92889b7210acb71cbfaf87",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/label.tsx"
+    },
+    {
+      "path": "components/ui/marker.jsx",
+      "sha256": "8777a50c2147d005e5e03f2da301862378721098468c14d2584dfc6465108224",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/marker.tsx"
+    },
+    {
+      "path": "components/ui/menubar.jsx",
+      "sha256": "48aa060c75b728af7507bad5e4bd04453cf81c9e0797333a20426164e4d8dd27",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/menubar.tsx"
+    },
+    {
+      "path": "components/ui/message.jsx",
+      "sha256": "9049bee44196c2d2fed0907a45333e0654effbf36e9a82c38582e098214e45ab",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/message.tsx"
+    },
+    {
+      "path": "components/ui/native-select.jsx",
+      "sha256": "f924de1ef4a9a97143906005c5c6a68e16c22b73b20c0aab4573c99139199514",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/native-select.tsx"
+    },
+    {
+      "path": "components/ui/navigation-menu.jsx",
+      "sha256": "7e7b82fca2177fbb8b461cb5843781fff488aabb4af0554b1ebc399e95a1003a",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/navigation-menu.tsx"
+    },
+    {
+      "path": "components/ui/pagination.jsx",
+      "sha256": "d15b10d95ac37fef332e0a91fd52d72fbdd515154890c7a21c3488d878f4e3ec",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/pagination.tsx"
+    },
+    {
+      "path": "components/ui/popover.jsx",
+      "sha256": "fe6d045f58fed01ee7e06cf7da4a67f750670de1f0d052ca52287b641fd84030",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/popover.tsx"
+    },
+    {
+      "path": "components/ui/progress.jsx",
+      "sha256": "22a31c06a90abee419db23eae930c0309170a616a134fcc3043b423f0cdfe320",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/progress.tsx"
+    },
+    {
+      "path": "components/ui/radio-group.jsx",
+      "sha256": "dbdb67ea68e534db4709d46e7c5a8508f12a961bf3d070548f0334d35e334f4d",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/radio-group.tsx"
+    },
+    {
+      "path": "components/ui/scroll-area.jsx",
+      "sha256": "e228a315d9d2c6149624634bf886051f89fe18c9ba6f43b66d1aa83165d446e8",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/scroll-area.tsx"
+    },
+    {
+      "path": "components/ui/select.jsx",
+      "sha256": "f24de53c569385f99476e563a242ec2329c6925190d73e39d07cde8dfcbb300c",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/select.tsx"
+    },
+    {
+      "path": "components/ui/separator.jsx",
+      "sha256": "fa2694a6a0fdfb0e551e959cd143a7d1f732f3ac001c8e5e47973dc871edaa14",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/separator.tsx"
+    },
+    {
+      "path": "components/ui/sheet.jsx",
+      "sha256": "7c68ba674c9694fdfea9d7b4698f450c14078b6c94e08047f87af040663bcf27",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/sheet.tsx"
+    },
+    {
+      "path": "components/ui/sidebar.jsx",
+      "sha256": "8329efb6f004994a079011489ab87733e836e91813239c2e8ad4faa0c9f01b71",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/sidebar.tsx"
+    },
+    {
+      "path": "components/ui/skeleton.jsx",
+      "sha256": "fd434dfb75e8aa69ef86c89dd6920b80792d1434487f3dd182f4a056b15e8023",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/skeleton.tsx"
+    },
+    {
+      "path": "components/ui/slider.jsx",
+      "sha256": "49dae20910a7fe77be5ee7a71dab88df1a1612209dbf311d8c0161a082fa265f",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/slider.tsx"
+    },
+    {
+      "path": "components/ui/spinner.jsx",
+      "sha256": "c6ac649a9a452af6b62d7ee91ff5f56b0fd6cb0ecf4b6f5f657838174c33ce51",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/spinner.tsx"
+    },
+    {
+      "path": "components/ui/switch.jsx",
+      "sha256": "65c4366f0a693eb1009687141cbc4194c742d69835fa484164433a1d937df984",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/switch.tsx"
+    },
+    {
+      "path": "components/ui/table.jsx",
+      "sha256": "de0ce7d2a351647ad94e4ba4417ed122c313f04f4907ad2f2952d344eb5adbda",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/table.tsx"
+    },
+    {
+      "path": "components/ui/tabs.jsx",
+      "sha256": "4e16a1c4a2f8e194679299793508a201dcc573c0c3eb29459f3d3b0cd18aa596",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/tabs.tsx"
+    },
+    {
+      "path": "components/ui/textarea.jsx",
+      "sha256": "37cf81a3b17a3e126cf0a721a0d77684ecc1eee4961f756568b95b6950b41480",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/textarea.tsx"
+    },
+    {
+      "path": "components/ui/toast.jsx",
+      "sha256": "ae2c68db2c9962500e466ec8270df3b7d91d10b588b87ea539c6699be18e6c21",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/toast.tsx"
+    },
+    {
+      "path": "components/ui/toggle-group.jsx",
+      "sha256": "cfd6ed962302acd778076b4c6035de70128a882f125fb1d38e808ad433f6c62c",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/toggle-group.tsx"
+    },
+    {
+      "path": "components/ui/toggle.jsx",
+      "sha256": "30217c4cf9609f5af62422cc58e456b6679d5485a74c81e25f32890c42402ca1",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/toggle.tsx"
+    },
+    {
+      "path": "components/ui/tooltip.jsx",
+      "sha256": "8c43d59605fbe1a6728ea2fe0e6f09d5bd157eb071e605245150176051a1dab7",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/ui/tooltip.tsx"
+    },
+    {
+      "path": "hooks/use-mobile.js",
+      "sha256": "adbb0dd2da0928091f8894de028f0ed7d36614f41c26c26a9e8863eed36b65d8",
+      "source": "shadcn-ui",
+      "upstreamPath": "registry/base-nova/hooks/use-mobile.ts"
+    }
+  ],
+  "format": 1,
+  "recordedAt": "2026-09-02T08:59:13.084Z",
+  "sources": {
+    "reui": {
+      "commit": "8a2c701eaf95729f238274d5ce2555a5a8bd23e7",
+      "fetchedAt": "2026-09-02T00:15:46.000Z",
+      "licence": "MIT",
+      "licenceSha256": "09592ffefa6512b68dd7aa9031bc50d5d39cfcc9da08288f5eb1f9d236baca66",
+      "registry": "reui.io base-nova. Measured against the repository at this commit: the served item is the file upstreamPath names with two things resolved into it - the import alias rewritten from @/registry/bases/base/lib/utils to @/lib/utils, and the per-style class markers (style-nova:, style-vega:, ...) collapsed to the nova style's own. So upstreamPath is a real path in that repository and the served bytes are that file composed with the style, not a copy of it.",
+      "repository": "keenthemes/reui",
+      "tool": "shadcn@4.19.1, run against the @reui registry in a scratch copy of the template outside the repository. The template's own components.json names no registry: these six pieces travel as bytes with the entries below, and nothing is fetched at set-up, build or run time. Upstream ships TypeScript; tsx: false makes the tool rewrite it into the JSX these files are, so every vendored piece is a transform of the upstream file rather than a copy of it."
+    },
+    "shadcn-ui": {
+      "commit": "8a1b5386010e1a4a50367fff39ee3216bf6f01b2",
+      "fetchedAt": "2026-09-02T00:01:14.329Z",
+      "licence": "MIT",
+      "licenceSha256": "1564074e13439397221ffd522e2e504d56561994a23d371aa5e3ad43e4f5423f",
+      "registry": "ui.shadcn.com base-nova. The served item is composed from apps/v4/registry/bases/base and the nova style, so upstreamPath names the served item file rather than a path in the repository - the exception is app/kit.css, whose upstreamPath is a real path there and whose bytes were measured identical to the ones the shadcn package ships.",
+      "repository": "shadcn-ui/ui",
+      "tool": "shadcn@4.19.1. It rewrites the registry TypeScript into the JSX these files are, so every vendored piece is a transform of the upstream file rather than a copy of it."
+    },
+    "tellop": {
+      "commit": "63e6e3ad664bbfcb706f2851f2aff5ee3ba7e479",
+      "fetchedAt": "2026-09-02T00:41:34.000Z",
+      "licence": "template-owned",
+      "registry": "written for the template. No registry served these three: they are the pieces this kit needs and nobody publishes - a list a person can search, sort and page through, a writing area over Tiptap 3, and a place to drop files, which neither shadcn's registry nor ReUI has at all (measured at qualification time).",
+      "repository": "Pathnomic/tellop",
+      "tool": "hand-written. There is no registry, no generator and no transform, so upstreamPath is the file's own path in this repository and commit is the tree these were written against rather than a point they were fetched from. This source carries no licence text on purpose: a generated app belongs to the person who made it (private, no author and no licence field), so there is nothing of Tellop's to licence inside one."
+    }
+  }
+}
+

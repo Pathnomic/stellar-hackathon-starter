@@ -1,0 +1,39 @@
+Stellar guide for the Tellop Stellar kit (docs/stellar/)
+
+This folder contains material from Stellar's "stellar-dev-skill":
+
+  Source:     https://github.com/stellar/stellar-dev-skill
+  Commit:     73b609d5e837ee6ab07ec14a413b6c225f777686 (2026-09-23)
+  Fetched:    2026-09-28
+  Licence:    Apache License, Version 2.0 (LICENSE in this folder, unchanged)
+  Copyright:  Copyright 2026 Stellar Development Foundation
+
+Modified by Pathnomic Labs: trimmed and annotated for the Tellop Stellar kit.
+Upstream text is kept as written; Pathnomic Labs removed parts and added a
+header to each changed file plus one-line notes that start "Kit note" or
+"Cut for this kit".
+
+Changed files, each a modified work made from the upstream files named:
+
+  wallet-and-payments.md    skills/dapp/SKILL.md
+  reading-the-network.md    skills/dapp/SKILL.md, skills/dapp/data-fetching.md,
+                            skills/data/SKILL.md, skills/data/horizon.md
+  contract-calls.md         skills/dapp/SKILL.md, skills/dapp/data-fetching.md,
+                            skills/data/SKILL.md, skills/assets/SKILL.md,
+                            skills/smart-contracts/development.md,
+                            skills/smart-contracts/security.md
+  test-money-and-assets.md  skills/assets/SKILL.md
+  test-network.md           skills/smart-contracts/testing.md,
+                            skills/standards/resources.md
+  errors.md                 skills/data/SKILL.md,
+                            skills/smart-contracts/development.md
+
+Copied unchanged: LICENSE.
+Written by Pathnomic Labs: INDEX.md and this NOTICE.
+
+Upstream files not used: README.md, skills/dapp/react.md,
+skills/dapp/smart-accounts.md, skills/smart-contracts/SKILL.md,
+skills/standards/SKILL.md, skills/standards/ecosystem.md,
+skills/agentic-payments/, skills/cross-chain/ and skills/zk-proofs/.
+
+The upstream repository has no NOTICE file of its own.

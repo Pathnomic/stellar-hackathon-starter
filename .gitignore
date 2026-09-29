@@ -1,0 +1,24 @@
+# Installs, build output and local state never belong in the repository.
+node_modules/
+.next/
+.turbopack/
+next-env.d.ts
+*.tsbuildinfo
+
+# What the app keeps for the people using it.
+.data/
+
+# The contract's build output.
+contracts/fundraiser/target/
+contracts/fundraiser/out/
+
+# Secrets are never written into a file: the app refuses to start while one of
+# these exists (lib/guard-no-plaintext-secrets.mjs).
+.env
+.env.*
+.envrc
+.npmrc
+.netrc
+
+.DS_Store
+Thumbs.db
