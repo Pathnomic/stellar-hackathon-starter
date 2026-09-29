@@ -77,15 +77,22 @@ A release is built on GitHub, never on a laptop. Pushing a tag that starts with
 at commit `88068ec50cba931a96436869727ed08edeb76ade` (its `v27.0.0`). That workflow builds the
 contract with `stellar contract build --optimize` (Stellar CLI
 27.0.0), records this repository inside the file (SEP-55), attaches
-`fundraiser_v<version>.wasm` to a GitHub release with its SHA-256, and attests
-the file with GitHub's build provenance.
+`fundraiser_v<version>.wasm` to a GitHub release named
+`v<version>_contracts_fundraiser_fundraiser_cli27.0.0`, and attests the
+file with GitHub's build provenance.
 
 To check a downloaded release file:
 
 ```sh
-gh attestation verify fundraiser_v1.0.0.wasm --repo Pathnomic/stellar-hackathon-starter
-shasum -a 256 fundraiser_v1.0.0.wasm   # the hash the release lists
+gh attestation verify fundraiser_v1.0.0.wasm --repo Pathnomic/stellar-hackathon-starter \
+  --signer-repo stellar-expert/soroban-build-workflow
+shasum -a 256 fundraiser_v1.0.0.wasm
 ```
+
+The attestation is signed by the build workflow's own repository, which is why
+`--signer-repo` names it. It records the SHA-256 it attests, the commit it was
+built from and the workflow run; the second command prints the file's hash to
+compare.
 
 To rebuild it yourself, use the same Stellar CLI (27.0.0) and the
 pinned Rust:
