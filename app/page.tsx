@@ -99,9 +99,7 @@ export default async function Page({
                 {contractId === null ? t('fundraiser.exampleBadge', locale) : t('fundraiser.publishedBadge', locale)}
               </Badge>
             </CardAction>
-            <CardDescription>
-              {contractId === null ? t('fundraiser.exampleNote', locale) : t('fundraiser.publishedNote', locale)}
-            </CardDescription>
+            {contractId === null ? <CardDescription>{t('fundraiser.exampleNote', locale)}</CardDescription> : null}
           </CardHeader>
           <CardContent>
             {contractId === null ? (

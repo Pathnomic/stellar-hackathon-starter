@@ -1,11 +1,12 @@
 'use client';
 
-import { useId, useState } from 'react';
-import type { FormEvent } from 'react';
+import { useEffect, useId, useState } from 'react';
+import type { FormEvent, ReactNode } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { Spinner } from '@/components/ui/spinner';
 
 import { t } from '../lib/i18n/index.js';
 import type { Locale } from '../lib/i18n/index.js';
@@ -18,11 +19,15 @@ import type { StellarProblem } from '../lib/stellar/network.ts';
 import { amountProblemWords, readAmount } from './amount-text.ts';
 import { readableAmount } from './fundraiser-view.ts';
 import { problemWords } from './stellar-problems.ts';
+import { waitView, watchChanges } from './wallet-wait.ts';
+import type { ChangeStage, ChangeWait } from './wallet-wait.ts';
 
 /**
  * The things a connected wallet can do on this page, each one the same three
  * steps: prepare it (the library asks the network what it will take), ask the
  * person to approve it in Freighter, then send it and wait for the answer.
+ * While it runs, its button shows a working mark and the step, and a line
+ * under it says when Freighter is opening (`wallet-wait.ts`).
  *
  * Every answer is shown in words. A change that went through, or that may
  * still go through, gets a link to Stellar Expert, the public explorer, so the
@@ -32,9 +37,6 @@ import { problemWords } from './stellar-problems.ts';
  * Only one of these runs at a time (`busy`, held by the panel): two changes
  * from one wallet at once would trip over each other on the network.
  */
-
-/** Which step a change is on. */
-type Stage = 'preparing' | 'approving' | 'sending';
 
 /** How a change ended. `hash` is set when the change is, or may be, on the network. */
 export type Outcome =
@@ -49,7 +51,7 @@ async function runChange(
   address: string,
   prepare: () => Promise<Prepared>,
   send: (signedXdr: string) => Promise<Sent>,
-  onStage: (stage: Stage) => void,
+  onStage: (stage: ChangeStage) => void,
 ): Promise<Sent> {
   onStage('preparing');
   const prepared = await prepare();
@@ -77,17 +79,6 @@ async function sendToFundraiser(signedXdr: string): Promise<Sent> {
   if (answer.ok) return { ok: true, hash: answer.hash };
   if (answer.status === 'pending') return { ok: false, reason: 'still-pending', hash: answer.hash ?? null };
   return { ok: false, reason: answer.reason, hash: answer.status === 'failed' ? (answer.hash ?? null) : null };
-}
-
-function stageWords(stage: Stage, locale: Locale): string {
-  switch (stage) {
-    case 'preparing':
-      return t('wallet.stepPreparing', locale);
-    case 'approving':
-      return t('wallet.stepApprove', locale);
-    case 'sending':
-      return t('wallet.stepSending', locale);
-  }
 }
 
 /** An amount of test money in words: "12.5 test money", "12,5 test parası". */
@@ -137,19 +128,69 @@ type FundraiserActionProps = ActionProps & {
   readonly onOutcome: (outcome: Outcome | null) => void;
 };
 
-/** One change underway at a time, with its current step for the button. */
+/**
+ * One button's wait (`wallet-wait.ts`): followed while the button is on the
+ * page, and ended however its work ends.
+ */
+export function useWait() {
+  const [wait, setWait] = useState<ChangeWait | null>(null);
+  const [watch] = useState(() => watchChanges(setWait));
+  useEffect(() => {
+    watch.start();
+    return watch.stop;
+  }, [watch]);
+  return { wait, run: watch.run };
+}
+
+/** One change at a time: its steps shown on its button, and the panel busy while it runs. */
 function useChange(props: ActionProps) {
-  const [stage, setStage] = useState<Stage | null>(null);
-  const run = async (prepare: () => Promise<Prepared>, send: (signedXdr: string) => Promise<Sent>): Promise<Sent> => {
-    props.onBusy(true);
-    try {
-      return await runChange(props.address, prepare, send, setStage);
-    } finally {
-      setStage(null);
-      props.onBusy(false);
-    }
-  };
-  return { stage, run };
+  const { wait, run } = useWait();
+  const change = (prepare: () => Promise<Prepared>, send: (signedXdr: string) => Promise<Sent>) =>
+    run((onStage) => runChange(props.address, prepare, send, onStage), props.onBusy);
+  return { wait, run: change };
+}
+
+/**
+ * A wallet button: its own words at rest; while it works, a working mark and
+ * its busy words instead, and under it the lines about Freighter. Those sit in
+ * a status area that is always there, so a screen reader hears each line once
+ * as it arrives, politely, and nothing here takes the focus. The mark is the
+ * kit's spinner, hidden from screen readers: the busy words already say it.
+ */
+export function ChangeButton(props: {
+  readonly wait: ChangeWait | null;
+  readonly locale: Locale;
+  /** Whether the button rests, as it does while anything on the panel is underway. */
+  readonly busy: boolean;
+  readonly variant?: 'outline';
+  readonly onClick?: () => void;
+  readonly type?: 'submit';
+  readonly children: ReactNode;
+}) {
+  const view = waitView(props.wait, props.locale);
+  return (
+    <div className="flex flex-col items-start">
+      <Button disabled={props.busy} onClick={props.onClick} type={props.type} variant={props.variant}>
+        {view.working ? (
+          <Spinner
+            aria-hidden="true"
+            aria-label={undefined}
+            className="motion-reduce:animate-none"
+            data-icon="inline-start"
+            role={undefined}
+          />
+        ) : null}
+        {view.step ?? props.children}
+      </Button>
+      <div aria-atomic="false" role="status">
+        {view.lines.map((line) => (
+          <p className="m-0 mt-2 text-sm text-muted-foreground" key={line}>
+            {line}
+          </p>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 /** Test money to another wallet. */
@@ -161,7 +202,7 @@ export function SendForm(props: ActionProps) {
   const [toProblem, setToProblem] = useState<string | null>(null);
   const [amountProblem, setAmountProblem] = useState<string | null>(null);
   const [outcome, setOutcome] = useState<Outcome | null>(null);
-  const { stage, run } = useChange(props);
+  const { wait, run } = useChange(props);
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -192,7 +233,7 @@ export function SendForm(props: ActionProps) {
           aria-invalid={toProblem !== null}
           autoCapitalize="characters"
           autoComplete="off"
-          disabled={stage !== null}
+          disabled={wait !== null}
           id={`${ids}-to`}
           onChange={(event) => setTo(event.target.value)}
           spellCheck={false}
@@ -206,7 +247,7 @@ export function SendForm(props: ActionProps) {
         <Input
           aria-invalid={amountProblem !== null}
           autoComplete="off"
-          disabled={stage !== null}
+          disabled={wait !== null}
           id={`${ids}-amount`}
           inputMode="decimal"
           onChange={(event) => setAmount(event.target.value)}
@@ -214,11 +255,9 @@ export function SendForm(props: ActionProps) {
         />
         {amountProblem === null ? null : <FieldError>{amountProblem}</FieldError>}
       </Field>
-      <div>
-        <Button disabled={busy} type="submit">
-          {stage === null ? t('wallet.sendAction', locale) : stageWords(stage, locale)}
-        </Button>
-      </div>
+      <ChangeButton busy={busy} locale={locale} type="submit" wait={wait}>
+        {t('wallet.sendAction', locale)}
+      </ChangeButton>
       <OutcomeLine locale={locale} outcome={outcome} />
     </form>
   );
@@ -230,7 +269,7 @@ export function DonateForm(props: FundraiserActionProps) {
   const ids = useId();
   const [amount, setAmount] = useState('');
   const [amountProblem, setAmountProblem] = useState<string | null>(null);
-  const { stage, run } = useChange(props);
+  const { wait, run } = useChange(props);
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -256,7 +295,7 @@ export function DonateForm(props: FundraiserActionProps) {
         <Input
           aria-invalid={amountProblem !== null}
           autoComplete="off"
-          disabled={stage !== null}
+          disabled={wait !== null}
           id={`${ids}-amount`}
           inputMode="decimal"
           onChange={(event) => setAmount(event.target.value)}
@@ -264,11 +303,9 @@ export function DonateForm(props: FundraiserActionProps) {
         />
         {amountProblem === null ? null : <FieldError>{amountProblem}</FieldError>}
       </Field>
-      <div>
-        <Button disabled={busy} type="submit">
-          {stage === null ? t('wallet.donateAction', locale) : stageWords(stage, locale)}
-        </Button>
-      </div>
+      <ChangeButton busy={busy} locale={locale} type="submit" wait={wait}>
+        {t('wallet.donateAction', locale)}
+      </ChangeButton>
     </form>
   );
 }
@@ -276,7 +313,7 @@ export function DonateForm(props: FundraiserActionProps) {
 /** Paying the money raised to the person the fundraiser is for: anyone may, once it ended at its goal. */
 export function CollectAction(props: FundraiserActionProps) {
   const { locale, address, busy, contractId, onOutcome } = props;
-  const { stage, run } = useChange(props);
+  const { wait, run } = useChange(props);
 
   const collect = async () => {
     if (busy) return;
@@ -293,9 +330,9 @@ export function CollectAction(props: FundraiserActionProps) {
   return (
     <div className="flex flex-col items-start gap-3">
       <p className="m-0">{t('wallet.collectExplain', locale)}</p>
-      <Button disabled={busy} onClick={collect}>
-        {stage === null ? t('wallet.collectAction', locale) : stageWords(stage, locale)}
-      </Button>
+      <ChangeButton busy={busy} locale={locale} onClick={collect} wait={wait}>
+        {t('wallet.collectAction', locale)}
+      </ChangeButton>
     </div>
   );
 }
@@ -303,7 +340,7 @@ export function CollectAction(props: FundraiserActionProps) {
 /** This wallet's donation back, once the fundraiser ended short of its goal. */
 export function RefundAction(props: FundraiserActionProps & { readonly given: string }) {
   const { locale, address, busy, contractId, onOutcome, given } = props;
-  const { stage, run } = useChange(props);
+  const { wait, run } = useChange(props);
 
   const refund = async () => {
     if (busy) return;
@@ -320,9 +357,9 @@ export function RefundAction(props: FundraiserActionProps & { readonly given: st
   return (
     <div className="flex flex-col items-start gap-3">
       <p className="m-0">{t('wallet.refundExplain', locale, { amount: testMoneyWords(given, locale) })}</p>
-      <Button disabled={busy} onClick={refund}>
-        {stage === null ? t('wallet.refundAction', locale) : stageWords(stage, locale)}
-      </Button>
+      <ChangeButton busy={busy} locale={locale} onClick={refund} wait={wait}>
+        {t('wallet.refundAction', locale)}
+      </ChangeButton>
     </div>
   );
 }

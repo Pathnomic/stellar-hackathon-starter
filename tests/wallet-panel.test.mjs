@@ -4,7 +4,9 @@
  *
  * The panel decides what to show in `app/wallet-view.ts` and reads typed
  * amounts in `app/amount-text.ts`, both pure, so these checks call them with
- * made-up states and typed text. Expected words are always looked up in
+ * made-up states and typed text. What a wallet button shows while it works,
+ * and the run that always ends its wait, are in `app/wallet-wait.ts`, whose
+ * one timer runs here on a mock clock. Expected words are always looked up in
  * `lib/i18n/locales/`, never written here.
  *
  * The last checks hold the words themselves: every word this app shows is
@@ -16,11 +18,12 @@
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
-import { test } from 'node:test';
+import { mock, test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
 import { amountProblemWords, readAmount } from '../app/amount-text.ts';
 import { fundraiserStep, panelView, shortAddress } from '../app/wallet-view.ts';
+import { SLOW_APPROVAL_MS, followChange, waitView, watchChanges } from '../app/wallet-wait.ts';
 import { LOCALES, MESSAGES } from '../lib/i18n/index.js';
 
 import { BENEFICIARY, CONTRACT_ID, WALLET } from './fixtures/stellar/fake-network.mjs';
@@ -240,6 +243,201 @@ test('ended short of its goal: a supporter gets their money back, anyone else is
 test('a wallet address is shortened to its first and last four characters', () => {
   assert.equal(shortAddress(ME), `${ME.slice(0, 4)}…${ME.slice(-4)}`);
   assert.equal(shortAddress('GABC'), 'GABC');
+});
+
+/* ------------------------------------------------------------------------ */
+/* While a wallet button works                                              */
+/* ------------------------------------------------------------------------ */
+
+// A change's three steps, then the two buttons that keep their own busy words.
+const STEP_KEYS = Object.freeze({
+  preparing: 'wallet.stepPreparing',
+  approving: 'wallet.stepApprove',
+  sending: 'wallet.stepSending',
+  connecting: 'wallet.connecting',
+  funding: 'wallet.gettingTestMoney',
+});
+const STAGES = Object.keys(STEP_KEYS);
+const opening = (locale) => MESSAGES[locale]['wallet.freighterOpening'];
+const where = (locale) => MESSAGES[locale]['wallet.freighterWhere'];
+
+/** Runs `check` with a follower on a mock clock, handing it everything the follower showed so far. */
+function followed(check) {
+  mock.timers.enable({ apis: ['setTimeout'] });
+  try {
+    const shown = [];
+    check(followChange((wait) => shown.push(wait)), shown);
+  } finally {
+    mock.timers.reset();
+  }
+}
+
+test('while a button works, it shows a working mark and its busy words; at rest, neither', () => {
+  for (const locale of LOCALES) {
+    assert.deepEqual(waitView(null, locale), { working: false, step: null, lines: [] });
+    for (const stage of STAGES) {
+      for (const slow of [false, true]) {
+        const view = waitView({ stage, slow }, locale);
+        assert.equal(view.working, true, `${locale} ${stage}: no working mark`);
+        assert.equal(view.step, MESSAGES[locale][STEP_KEYS[stage]], `${locale} ${stage}`);
+      }
+    }
+  }
+});
+
+test('the line saying Freighter is opening shows only while Freighter is awaited: approving, or connecting', () => {
+  for (const locale of LOCALES) {
+    for (const stage of ['approving', 'connecting']) {
+      assert.deepEqual(waitView({ stage, slow: false }, locale).lines, [opening(locale)], `${locale} ${stage}`);
+    }
+    for (const stage of ['preparing', 'sending', 'funding']) {
+      for (const slow of [false, true]) {
+        assert.deepEqual(waitView({ stage, slow }, locale).lines, [], `${locale} ${stage}`);
+      }
+    }
+  }
+});
+
+test('where to find Freighter is said only once it has been awaited for ten seconds', () => {
+  assert.equal(SLOW_APPROVAL_MS, 10_000);
+  followed((follower, shown) => {
+    // Only a wait in Freighter is ever "slow": no timer runs for the others.
+    for (const stage of ['preparing', 'sending', 'funding']) {
+      follower.moveTo(stage);
+      mock.timers.tick(SLOW_APPROVAL_MS * 2);
+      assert.deepEqual(shown.at(-1), { stage, slow: false }, stage);
+    }
+    follower.moveTo('approving');
+    mock.timers.tick(SLOW_APPROVAL_MS - 1);
+    assert.deepEqual(shown.at(-1), { stage: 'approving', slow: false });
+    mock.timers.tick(1);
+    assert.deepEqual(shown.at(-1), { stage: 'approving', slow: true });
+    for (const locale of LOCALES) assert.deepEqual(waitView(shown.at(-1), locale).lines, [opening(locale), where(locale)]);
+  });
+});
+
+test('both lines go as soon as the approval ends, and its timer goes with them', () => {
+  followed((follower, shown) => {
+    // Approved within ten seconds: the second line never comes.
+    follower.moveTo('approving');
+    mock.timers.tick(SLOW_APPROVAL_MS / 2);
+    follower.moveTo('sending');
+    mock.timers.tick(SLOW_APPROVAL_MS * 2);
+    assert.deepEqual(shown.at(-1), { stage: 'sending', slow: false });
+    for (const locale of LOCALES) assert.deepEqual(waitView(shown.at(-1), locale).lines, []);
+    // Approved after ten seconds: both lines go, and the next approval waits afresh.
+    follower.moveTo(null);
+    follower.moveTo('approving');
+    mock.timers.tick(SLOW_APPROVAL_MS);
+    assert.deepEqual(shown.at(-1), { stage: 'approving', slow: true });
+    follower.moveTo(null);
+    assert.equal(shown.at(-1), null);
+    follower.moveTo('approving');
+    mock.timers.tick(SLOW_APPROVAL_MS - 1);
+    assert.deepEqual(shown.at(-1), { stage: 'approving', slow: false });
+    // The action leaves the page mid-approval: nothing more is shown, the timer included.
+    const before = shown.length;
+    follower.stop();
+    mock.timers.tick(SLOW_APPROVAL_MS * 2);
+    follower.moveTo('sending');
+    assert.equal(shown.length, before);
+  });
+});
+
+/**
+ * Runs `check` with a watch on a mock clock, started as a button arriving on
+ * the page starts it, handing it what was shown and each busy flag set.
+ */
+async function watched(check) {
+  mock.timers.enable({ apis: ['setTimeout'] });
+  try {
+    const shown = [];
+    const held = [];
+    const watch = watchChanges((wait) => shown.push(wait));
+    watch.start();
+    await check({ watch, shown, held, onBusy: (busy) => held.push(busy) });
+  } finally {
+    mock.timers.reset();
+  }
+}
+
+/** A change that reports `steps`, then ends the way `end` does: with an answer, or by throwing. */
+const changeThat = (steps, end) => async (onStage) => {
+  for (const stage of steps) onStage(stage);
+  return end();
+};
+
+const ENDINGS = Object.freeze([
+  { how: 'went through', steps: ['preparing', 'approving', 'sending'], end: () => ({ ok: true, hash: 'a'.repeat(64) }) },
+  { how: 'was declined', steps: ['preparing', 'approving'], end: () => ({ ok: false, reason: 'declined', hash: null }) },
+  {
+    how: 'threw',
+    steps: ['preparing', 'approving'],
+    end: () => {
+      throw new Error('the wallet went away');
+    },
+  },
+]);
+
+for (const { how, steps, end } of ENDINGS) {
+  test(`a change that ${how} ends its wait: at rest, the page let go, and no timer left behind`, async () => {
+    await watched(async ({ watch, shown, held, onBusy }) => {
+      const ended = await watch.run(changeThat(steps, end), onBusy).then(
+        (answer) => ({ answer }),
+        (error) => ({ error }),
+      );
+      if (how === 'threw') assert.equal(ended.error?.message, 'the wallet went away', 'the failure did not reach the caller');
+      else assert.deepEqual(ended.answer, end());
+      assert.deepEqual(shown, [...steps.map((stage) => ({ stage, slow: false })), null], 'the wait did not end at rest');
+      assert.deepEqual(held, [true, false], 'the page was not let go');
+      mock.timers.tick(SLOW_APPROVAL_MS * 2);
+      assert.equal(shown.at(-1), null, "the approval's timer outlived it");
+    });
+  });
+}
+
+test('connecting the wallet keeps its own busy words, says Freighter is opening, and after ten seconds where to find it', async () => {
+  await watched(async ({ watch, shown }) => {
+    let answer;
+    const connecting = watch.run(async (onStage) => {
+      onStage('connecting');
+      return new Promise((resolve) => {
+        answer = resolve;
+      });
+    });
+    for (const locale of LOCALES) {
+      const view = waitView(shown.at(-1), locale);
+      assert.deepEqual(view, { working: true, step: MESSAGES[locale]['wallet.connecting'], lines: [opening(locale)] }, locale);
+    }
+    mock.timers.tick(SLOW_APPROVAL_MS);
+    for (const locale of LOCALES) assert.deepEqual(waitView(shown.at(-1), locale).lines, [opening(locale), where(locale)]);
+    answer({ ok: true, address: ME });
+    assert.deepEqual(await connecting, { ok: true, address: ME });
+    assert.equal(shown.at(-1), null);
+  });
+});
+
+test('a button that leaves the page shows nothing more but still lets the page go, and one put back follows afresh', async () => {
+  await watched(async ({ watch, shown, held, onBusy }) => {
+    // React's strict mode takes a new button off the page and puts it back once: it still follows.
+    watch.stop();
+    watch.start();
+    let approve;
+    const running = watch.run(async (onStage) => {
+      onStage('approving');
+      return new Promise((resolve) => {
+        approve = resolve;
+      });
+    }, onBusy);
+    assert.deepEqual(shown, [{ stage: 'approving', slow: false }]);
+    // Now it leaves while Freighter is awaited.
+    watch.stop();
+    mock.timers.tick(SLOW_APPROVAL_MS * 2);
+    approve('approved');
+    assert.equal(await running, 'approved');
+    assert.deepEqual(shown, [{ stage: 'approving', slow: false }], 'something showed after the button left');
+    assert.deepEqual(held, [true, false], 'the page was not let go');
+  });
 });
 
 /* ------------------------------------------------------------------------ */

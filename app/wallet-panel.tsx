@@ -16,7 +16,16 @@ import type { StellarProblem } from '../lib/stellar/network.ts';
 
 import { useFundraiserReading } from './fundraiser-reading.ts';
 import { problemWords } from './stellar-problems.ts';
-import { CollectAction, DonateForm, OutcomeLine, RefundAction, SendForm, testMoneyWords } from './wallet-actions.tsx';
+import {
+  ChangeButton,
+  CollectAction,
+  DonateForm,
+  OutcomeLine,
+  RefundAction,
+  SendForm,
+  testMoneyWords,
+  useWait,
+} from './wallet-actions.tsx';
 import type { Outcome } from './wallet-actions.tsx';
 import { panelView, shortAddress } from './wallet-view.ts';
 import type { BalanceState, ContributionState, FundraiserStep, WalletState } from './wallet-view.ts';
@@ -59,11 +68,11 @@ export function WalletPanel({ locale, contractId }: { readonly locale: Locale; r
   const [wallet, setWallet] = useState<WalletState>({ kind: 'checking' });
   const [balance, setBalance] = useState<BalanceState>({ kind: 'reading' });
   const [contribution, setContribution] = useState<ContributionState>({ kind: 'reading' });
-  const [funding, setFunding] = useState<{ readonly running: boolean; readonly problem: StellarProblem | null }>({
-    running: false,
-    problem: null,
-  });
+  const [fundingProblem, setFundingProblem] = useState<StellarProblem | null>(null);
   const [busy, setBusy] = useState(false);
+  // Connecting waits on Freighter's window; test money, on the test network (`wallet-wait.ts`).
+  const connectWait = useWait();
+  const fundingWait = useWait();
   const [fundingOutcome, setFundingOutcome] = useState<Outcome | null>(null);
   const [fundraiserOutcome, setFundraiserOutcome] = useState<Outcome | null>(null);
   const shared = useFundraiserReading(contractId);
@@ -114,7 +123,11 @@ export function WalletPanel({ locale, contractId }: { readonly locale: Locale; r
   const connect = async () => {
     const wrongNetwork = wallet.kind === 'wrong-network';
     setWallet(wrongNetwork ? { ...wallet, busy: true } : { kind: 'connecting' });
-    const next = afterConnect(await connectWallet());
+    const answer = await connectWait.run((onStage) => {
+      onStage('connecting');
+      return connectWallet();
+    });
+    const next = afterConnect(answer);
     setWallet(next);
     if (next.kind === 'connected') {
       readBalance(next.address, false);
@@ -131,11 +144,12 @@ export function WalletPanel({ locale, contractId }: { readonly locale: Locale; r
   });
 
   const getTestMoney = async (address: string) => {
-    setFunding({ running: true, problem: null });
-    setBusy(true);
-    const answer = await fundWithTestMoney(address);
-    setBusy(false);
-    setFunding({ running: false, problem: answer.ok ? null : answer.reason });
+    setFundingProblem(null);
+    const answer = await fundingWait.run((onStage) => {
+      onStage('funding');
+      return fundWithTestMoney(address);
+    }, setBusy);
+    setFundingProblem(answer.ok ? null : answer.reason);
     if (!answer.ok) return;
     if (answer.state === 'funded') setFundingOutcome({ ok: true, hash: answer.hash, words: t('wallet.funded', locale) });
     readBalance(address, true);
@@ -186,9 +200,9 @@ export function WalletPanel({ locale, contractId }: { readonly locale: Locale; r
                 {problemWords(view.problem, locale)}
               </p>
             )}
-            <Button disabled={view.busy} onClick={connect}>
-              {view.busy ? t('wallet.connecting', locale) : t('wallet.connect', locale)}
-            </Button>
+            <ChangeButton busy={view.busy} locale={locale} onClick={connect} wait={connectWait.wait}>
+              {t('wallet.connect', locale)}
+            </ChangeButton>
           </div>
         ) : null}
 
@@ -200,9 +214,9 @@ export function WalletPanel({ locale, contractId }: { readonly locale: Locale; r
             <p className="m-0" role="alert">
               {t('wallet.wrongNetwork', locale)}
             </p>
-            <Button disabled={view.busy} onClick={connect} variant="outline">
-              {view.busy ? t('wallet.connecting', locale) : t('wallet.checkAgain', locale)}
-            </Button>
+            <ChangeButton busy={view.busy} locale={locale} onClick={connect} variant="outline" wait={connectWait.wait}>
+              {t('wallet.checkAgain', locale)}
+            </ChangeButton>
           </div>
         ) : null}
 
@@ -229,15 +243,14 @@ export function WalletPanel({ locale, contractId }: { readonly locale: Locale; r
 
             {view.balance.kind === 'not-funded' ? (
               <div className="flex flex-col items-start gap-3">
-                <p className="m-0">{t('wallet.notFunded', locale)}</p>
-                {funding.problem === null ? null : (
+                {fundingProblem === null ? null : (
                   <p className="m-0 text-sm text-destructive" role="alert">
-                    {problemWords(funding.problem, locale)}
+                    {problemWords(fundingProblem, locale)}
                   </p>
                 )}
-                <Button disabled={busy} onClick={() => void getTestMoney(view.address)}>
-                  {funding.running ? t('wallet.gettingTestMoney', locale) : t('wallet.getTestMoney', locale)}
-                </Button>
+                <ChangeButton busy={busy} locale={locale} onClick={() => void getTestMoney(view.address)} wait={fundingWait.wait}>
+                  {t('wallet.getTestMoney', locale)}
+                </ChangeButton>
               </div>
             ) : null}
 

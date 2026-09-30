@@ -62,6 +62,9 @@ safe, whatever else the app becomes.
   rather than the Freighter package itself. Links to Stellar Expert
   (`explorerTxUrl`, `explorerAccountUrl`, `explorerContractUrl`) are shown only
   outside that preview.
+  As a page loads, its one wallet call is `freighterStatus()`, and the page
+  uses only its `available`: nothing else is asked of Freighter until the
+  person presses Connect.
 - **Amounts are counted in stroops, as a `bigint`** (10,000,000 stroops make one
   unit of test money): `toStroops()` turns a written amount into one and
   `formatTestMoney()` writes one back. Never do money sums with ordinary
@@ -79,6 +82,12 @@ safe, whatever else the app becomes.
 - **Stellar resets its test network about four times a year**, deleting every
   account and contract on it. A published contract that no longer answers is an
   ordinary state the page shows in words, never an error.
+- **The fundraiser's story is told once on the page.** When you write the app's
+  own opening, take out the example's heading, story and updates card
+  (`example.title`, `example.story`, `example.updates` in `app/page.tsx`), and
+  give your own heading `id="fundraiser-title"`, which names the section. The
+  "Stellar test network" badge, the test-money line, the progress card and the
+  wallet panel stay.
 - **For anything else about Stellar, read `docs/stellar/INDEX.md` first.** It is
   a guide made from Stellar's own developer material, trimmed to this kind of
   app, and it says which of its files answers what. Where it and these rules

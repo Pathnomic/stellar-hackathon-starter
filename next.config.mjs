@@ -18,8 +18,7 @@ const nextConfig = {
   // Next 16.3 writes a block into AGENTS.md (and creates AGENTS.md and
   // CLAUDE.md when neither exists) whenever `next dev` finds an AI coding tool
   // in its environment. This kit's AGENTS.md is Tellop's rulebook for the app's
-  // AI and changes only when Tellop changes it, so that rewrite is off. Stellar
-  // kit only: the curated template's Next 16.2 has no such setting.
+  // AI and changes only when Tellop changes it, so that rewrite is off.
   agentRules: false,
   // The Stellar SDK decodes addresses with base32.js, which calls `new Buffer()`.
   // Bundled into the server's files, that prints Node's deprecation warning while
