@@ -27,6 +27,7 @@ Labs, published on its own under the Apache License 2.0.
 | `contracts/fundraiser/` | The escrow fundraising contract in Rust, its tests and its review notes |
 | `docs/stellar/` | A Stellar guide for AI coding agents, trimmed from Stellar's official Skills |
 | `AGENTS.md` | The kit's Stellar rules for AI coding agents |
+| `GUIDE.md` | Making a Stellar app from this kit in Tellop, with no code, in English and Turkish |
 
 ## Run it
 
@@ -162,11 +163,12 @@ again.
 
 ## Where it comes from
 
-Inside Tellop, a person describes an app and Tellop builds it from this kit.
-Comments and tests mention Tellop's in-app preview, its save checks and the
-general rules it gives every app (sections 1 to 10 of its rulebook); this
-repository carries only the Stellar rules, in `AGENTS.md`. Outside Tellop the
-app runs as an ordinary Next.js app.
+Inside Tellop, a person describes an app and Tellop builds it from this kit;
+`GUIDE.md` walks through it, from a new app to a test payment on Stellar
+Expert. Comments and tests mention Tellop's in-app preview, its save checks
+and the general rules it gives every app (sections 1 to 10 of its rulebook);
+this repository carries only the Stellar rules, in `AGENTS.md`. Outside Tellop
+the app runs as an ordinary Next.js app.
 
 ## License
 
